@@ -81,6 +81,8 @@
             <!-- Tabs -->
             <div class="tabs">
                 <button class="tab-btn active" data-tab="milestones">Leveling Guide</button>
+                <button class="tab-btn" data-tab="quests">Quests & Rewards</button>
+                <button class="tab-btn" data-tab="labs">Labyrinth</button>
                 <button class="tab-btn" data-tab="skills">Skills & Gems</button>
                 <button class="tab-btn" data-tab="items">Gear</button>
                 <button class="tab-btn" data-tab="tree">Passive Tree</button>
@@ -92,6 +94,40 @@
                 <!-- Milestones Tab -->
                 <div id="milestones-tab" class="tab-pane active">
                     <div id="milestones-list" class="milestones-list"></div>
+                </div>
+
+                <!-- Quests Tab -->
+                <div id="quests-tab" class="tab-pane">
+                    <div id="quests-container">
+                        <div class="act-selector">
+                            <label for="quest-act-select">Select Act:</label>
+                            <select id="quest-act-select">
+                                <option value="1">Act 1</option>
+                                <option value="2">Act 2</option>
+                                <option value="3">Act 3</option>
+                                <option value="4">Act 4</option>
+                                <option value="5">Act 5</option>
+                                <option value="6">Act 6</option>
+                                <option value="7">Act 7</option>
+                                <option value="8">Act 8</option>
+                                <option value="9">Act 9</option>
+                                <option value="10">Act 10</option>
+                            </select>
+                        </div>
+                        <div id="act-tips" class="tips-section"></div>
+                        <div id="quests-list" class="quests-list"></div>
+                    </div>
+                </div>
+
+                <!-- Labs Tab -->
+                <div id="labs-tab" class="tab-pane">
+                    <div id="labs-info" class="labs-info">
+                        <div class="lab-notice">
+                            <h3>Ascendancy - Your Biggest Power Spike!</h3>
+                            <p>Completing the Labyrinth trials and running the Labs grants Ascendancy points, which provide massive build-defining bonuses.</p>
+                        </div>
+                        <div id="labs-list" class="labs-list"></div>
+                    </div>
                 </div>
 
                 <!-- Skills Tab -->

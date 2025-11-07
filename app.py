@@ -11,6 +11,10 @@ from datetime import datetime
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from pob_parser import PoBParser
+from game_data import (
+    QUEST_REWARDS, LABYRINTH_TRIALS, ACT_TIPS, ENDGAME_MILESTONES,
+    get_quest_rewards_for_act, get_act_tips
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -111,8 +115,10 @@ def import_build():
             'current_level': 1,
             'current_act': 1,
             'completed_milestones': [],
-            'completed_gems': [],
-            'equipped_items': []
+            'completed_quests': [],
+            'completed_labs': [],
+            'completed_trials': [],
+            'bandit_choice': None
         }
         save_json_file(PROGRESS_FILE, progress)
 
@@ -154,8 +160,10 @@ def update_progress(build_id):
             'current_level': 1,
             'current_act': 1,
             'completed_milestones': [],
-            'completed_gems': [],
-            'equipped_items': []
+            'completed_quests': [],
+            'completed_labs': [],
+            'completed_trials': [],
+            'bandit_choice': None
         }
 
     # Update progress
@@ -165,10 +173,14 @@ def update_progress(build_id):
         progress[build_id]['current_act'] = data['current_act']
     if 'completed_milestones' in data:
         progress[build_id]['completed_milestones'] = data['completed_milestones']
-    if 'completed_gems' in data:
-        progress[build_id]['completed_gems'] = data['completed_gems']
-    if 'equipped_items' in data:
-        progress[build_id]['equipped_items'] = data['equipped_items']
+    if 'completed_quests' in data:
+        progress[build_id]['completed_quests'] = data['completed_quests']
+    if 'completed_labs' in data:
+        progress[build_id]['completed_labs'] = data['completed_labs']
+    if 'completed_trials' in data:
+        progress[build_id]['completed_trials'] = data['completed_trials']
+    if 'bandit_choice' in data:
+        progress[build_id]['bandit_choice'] = data['bandit_choice']
 
     save_json_file(PROGRESS_FILE, progress)
 
@@ -200,6 +212,97 @@ def toggle_milestone(build_id, milestone_index):
 def health():
     """Health check endpoint"""
     return jsonify({'status': 'ok', 'timestamp': datetime.now().isoformat()})
+
+
+@app.route('/api/game-data/quests/<int:act>', methods=['GET'])
+def get_quests(act):
+    """Get quest rewards for a specific act"""
+    quests = get_quest_rewards_for_act(act)
+    return jsonify({'quests': quests})
+
+
+@app.route('/api/game-data/tips/<int:act>', methods=['GET'])
+def get_tips(act):
+    """Get tips for a specific act"""
+    tips = get_act_tips(act)
+    return jsonify({'tips': tips})
+
+
+@app.route('/api/game-data/labs', methods=['GET'])
+def get_labs():
+    """Get labyrinth trial information"""
+    return jsonify({'labs': LABYRINTH_TRIALS})
+
+
+@app.route('/api/game-data/endgame', methods=['GET'])
+def get_endgame():
+    """Get endgame progression milestones"""
+    return jsonify({'milestones': ENDGAME_MILESTONES})
+
+
+@app.route('/api/progress/<build_id>/quest/<act>/<int:quest_index>', methods=['POST'])
+def toggle_quest(build_id, act, quest_index):
+    """Toggle a quest completion"""
+    progress = load_json_file(PROGRESS_FILE, default={})
+
+    if build_id not in progress:
+        return jsonify({'error': 'Build not found'}), 404
+
+    quest_id = f"{act}_{quest_index}"
+    completed = progress[build_id].get('completed_quests', [])
+
+    if quest_id in completed:
+        completed.remove(quest_id)
+    else:
+        completed.append(quest_id)
+
+    progress[build_id]['completed_quests'] = completed
+    save_json_file(PROGRESS_FILE, progress)
+
+    return jsonify({'success': True, 'completed_quests': completed})
+
+
+@app.route('/api/progress/<build_id>/trial/<lab>/<int:trial_index>', methods=['POST'])
+def toggle_trial(build_id, lab, trial_index):
+    """Toggle a trial completion"""
+    progress = load_json_file(PROGRESS_FILE, default={})
+
+    if build_id not in progress:
+        return jsonify({'error': 'Build not found'}), 404
+
+    trial_id = f"{lab}_{trial_index}"
+    completed = progress[build_id].get('completed_trials', [])
+
+    if trial_id in completed:
+        completed.remove(trial_id)
+    else:
+        completed.append(trial_id)
+
+    progress[build_id]['completed_trials'] = completed
+    save_json_file(PROGRESS_FILE, progress)
+
+    return jsonify({'success': True, 'completed_trials': completed})
+
+
+@app.route('/api/progress/<build_id>/lab/<lab>', methods=['POST'])
+def toggle_lab(build_id, lab):
+    """Toggle a labyrinth completion"""
+    progress = load_json_file(PROGRESS_FILE, default={})
+
+    if build_id not in progress:
+        return jsonify({'error': 'Build not found'}), 404
+
+    completed = progress[build_id].get('completed_labs', [])
+
+    if lab in completed:
+        completed.remove(lab)
+    else:
+        completed.append(lab)
+
+    progress[build_id]['completed_labs'] = completed
+    save_json_file(PROGRESS_FILE, progress)
+
+    return jsonify({'success': True, 'completed_labs': completed})
 
 
 def open_browser():

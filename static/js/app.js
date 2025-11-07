@@ -7,10 +7,15 @@ let currentProgress = null;
 // API base URL
 const API_BASE = '/api';
 
+// Game data cache
+let questsCache = {};
+let labsData = null;
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
     initializeEventListeners();
     loadBuilds();
+    loadLabsData();
 });
 
 // Event Listeners
@@ -37,6 +42,11 @@ function initializeEventListeners() {
     // Progress inputs
     document.getElementById('current-level').addEventListener('change', autoSaveProgress);
     document.getElementById('current-act').addEventListener('change', autoSaveProgress);
+
+    // Quest act selector
+    document.getElementById('quest-act-select').addEventListener('change', (e) => {
+        loadQuestsForAct(parseInt(e.target.value));
+    });
 }
 
 // API Functions
@@ -225,6 +235,12 @@ function renderBuildDetails() {
     renderItems();
     renderTree();
     renderNotes();
+    renderLabs();
+
+    // Load quests for current act
+    const currentAct = currentProgress.current_act || 1;
+    document.getElementById('quest-act-select').value = currentAct;
+    loadQuestsForAct(currentAct);
 
     // Switch to first tab
     switchTab('milestones');
@@ -382,6 +398,211 @@ function escapeHtml(text) {
     return String(text).replace(/[&<>"']/g, m => map[m]);
 }
 
+// Quest and Lab functions
+async function loadLabsData() {
+    try {
+        const data = await apiCall('/game-data/labs');
+        labsData = data.labs;
+    } catch (error) {
+        console.error('Failed to load labs data:', error);
+    }
+}
+
+async function loadQuestsForAct(act) {
+    if (!currentBuild) return;
+
+    try {
+        // Load quests
+        const questData = await apiCall(`/game-data/quests/${act}`);
+        const tipsData = await apiCall(`/game-data/tips/${act}`);
+
+        // Cache the data
+        questsCache[act] = {
+            quests: questData.quests,
+            tips: tipsData.tips
+        };
+
+        renderQuests(act);
+    } catch (error) {
+        console.error('Failed to load quest data:', error);
+    }
+}
+
+function renderQuests(act) {
+    const cached = questsCache[act];
+    if (!cached) return;
+
+    // Render tips
+    const tipsDiv = document.getElementById('act-tips');
+    if (cached.tips && cached.tips.title) {
+        const tipsList = cached.tips.tips || [];
+        tipsDiv.innerHTML = `
+            <h4>${escapeHtml(cached.tips.title)}</h4>
+            <ul>
+                ${tipsList.map(tip => `<li>${escapeHtml(tip)}</li>`).join('')}
+            </ul>
+        `;
+    } else {
+        tipsDiv.innerHTML = '';
+    }
+
+    // Render quests
+    const questsList = document.getElementById('quests-list');
+    const quests = cached.quests || [];
+
+    if (quests.length === 0) {
+        questsList.innerHTML = '<p class="empty-state">No quest data available for this act</p>';
+        return;
+    }
+
+    questsList.innerHTML = quests.map((quest, index) => {
+        const questId = `act${act}_${index}`;
+        const isCompleted = currentProgress.completed_quests?.includes(questId) || false;
+        const importantClass = quest.important ? 'important' : '';
+
+        // Format rewards
+        let rewardText = '';
+        if (Array.isArray(quest.rewards)) {
+            rewardText = quest.rewards.join(', ');
+        } else {
+            rewardText = quest.rewards;
+        }
+
+        return `
+            <div class="quest-item ${isCompleted ? 'completed' : ''} ${importantClass}">
+                <input
+                    type="checkbox"
+                    class="quest-checkbox"
+                    ${isCompleted ? 'checked' : ''}
+                    onchange="toggleQuest('act${act}', ${index})">
+                <div class="quest-content">
+                    <div class="quest-name">
+                        ${escapeHtml(quest.quest)}
+                        ${quest.important ? '<span class="quest-important-badge">Important!</span>' : ''}
+                    </div>
+                    <div class="quest-rewards">Rewards: ${escapeHtml(rewardText)}</div>
+                    <div class="quest-location">Location: ${escapeHtml(quest.location)}</div>
+                    ${quest.notes ? `<div class="quest-notes">${escapeHtml(quest.notes)}</div>` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderLabs() {
+    const labsList = document.getElementById('labs-list');
+
+    if (!labsData) {
+        labsList.innerHTML = '<p class="empty-state">Loading lab data...</p>';
+        return;
+    }
+
+    const labs = ['normal', 'cruel', 'merciless', 'eternal'];
+
+    labsList.innerHTML = labs.map(labKey => {
+        const lab = labsData[labKey];
+        const isCompleted = currentProgress.completed_labs?.includes(labKey) || false;
+
+        let trialsHtml = '';
+        if (Array.isArray(lab.trials)) {
+            trialsHtml = `
+                <div class="lab-trials">
+                    <h4>Required Trials (${lab.trials.length}):</h4>
+                    ${lab.trials.map((trial, idx) => {
+                        const trialId = `${labKey}_${idx}`;
+                        const trialCompleted = currentProgress.completed_trials?.includes(trialId) || false;
+
+                        return `
+                            <div class="trial-item ${trialCompleted ? 'completed' : ''}">
+                                <input
+                                    type="checkbox"
+                                    class="trial-checkbox"
+                                    ${trialCompleted ? 'checked' : ''}
+                                    onchange="toggleTrial('${labKey}', ${idx})">
+                                <span class="trial-location">${escapeHtml(trial.location)}</span>
+                                <span class="trial-act">Act ${trial.act}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        } else if (typeof lab.trials === 'string') {
+            trialsHtml = `
+                <div class="lab-trials">
+                    <h4>Trials:</h4>
+                    <p style="color: var(--text-secondary); padding: 10px;">${escapeHtml(lab.trials)}</p>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="lab-section ${isCompleted ? 'completed' : ''}">
+                <div class="lab-header">
+                    <div>
+                        <div class="lab-name">${escapeHtml(lab.name)}</div>
+                        <div class="lab-level">Recommended Level: ${lab.level}</div>
+                    </div>
+                    <div class="lab-completion">
+                        <label>Completed:</label>
+                        <input
+                            type="checkbox"
+                            ${isCompleted ? 'checked' : ''}
+                            onchange="toggleLab('${labKey}')">
+                    </div>
+                </div>
+                <div class="lab-reward">
+                    <div class="lab-reward-title">Reward:</div>
+                    <div>${escapeHtml(lab.reward)}</div>
+                </div>
+                ${lab.notes ? `<p style="color: var(--text-secondary); margin-bottom: 15px;">${escapeHtml(lab.notes)}</p>` : ''}
+                ${trialsHtml}
+            </div>
+        `;
+    }).join('');
+}
+
+async function toggleQuest(act, questIndex) {
+    if (!currentBuild) return;
+
+    try {
+        const data = await apiCall(`/progress/${currentBuild.id}/quest/${act}/${questIndex}`, 'POST');
+        currentProgress.completed_quests = data.completed_quests;
+
+        // Re-render quests for current act
+        const currentAct = parseInt(document.getElementById('quest-act-select').value);
+        renderQuests(currentAct);
+    } catch (error) {
+        console.error('Failed to toggle quest:', error);
+    }
+}
+
+async function toggleTrial(lab, trialIndex) {
+    if (!currentBuild) return;
+
+    try {
+        const data = await apiCall(`/progress/${currentBuild.id}/trial/${lab}/${trialIndex}`, 'POST');
+        currentProgress.completed_trials = data.completed_trials;
+        renderLabs();
+    } catch (error) {
+        console.error('Failed to toggle trial:', error);
+    }
+}
+
+async function toggleLab(lab) {
+    if (!currentBuild) return;
+
+    try {
+        const data = await apiCall(`/progress/${currentBuild.id}/lab/${lab}`, 'POST');
+        currentProgress.completed_labs = data.completed_labs;
+        renderLabs();
+    } catch (error) {
+        console.error('Failed to toggle lab:', error);
+    }
+}
+
 // Make functions globally accessible
 window.loadBuildDetails = loadBuildDetails;
 window.toggleMilestone = toggleMilestone;
+window.toggleQuest = toggleQuest;
+window.toggleTrial = toggleTrial;
+window.toggleLab = toggleLab;
