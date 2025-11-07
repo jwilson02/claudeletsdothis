@@ -15,6 +15,7 @@ from game_data import (
     QUEST_REWARDS, LABYRINTH_TRIALS, ACT_TIPS, ENDGAME_MILESTONES,
     get_quest_rewards_for_act, get_act_tips
 )
+from demo_build import create_demo_build, get_demo_progress
 
 app = Flask(__name__)
 CORS(app)
@@ -126,6 +127,32 @@ def import_build():
             'success': True,
             'build_id': build_id,
             'build': build_data
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+
+@app.route('/api/builds/demo', methods=['POST'])
+def load_demo_build():
+    """Load the demo build for testing"""
+    try:
+        demo_build, build_id = create_demo_build()
+
+        # Save to builds
+        builds = load_json_file(BUILDS_FILE, default=[])
+        builds.append(demo_build)
+        save_json_file(BUILDS_FILE, builds)
+
+        # Initialize progress
+        progress = load_json_file(PROGRESS_FILE, default={})
+        progress[build_id] = get_demo_progress(build_id)
+        save_json_file(PROGRESS_FILE, progress)
+
+        return jsonify({
+            'success': True,
+            'build_id': build_id,
+            'build': demo_build
         })
 
     except Exception as e:

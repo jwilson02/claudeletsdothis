@@ -81,6 +81,17 @@ header h1 {
     gap: 15px;
 }
 
+.import-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.import-buttons .btn {
+    flex: 1;
+    min-width: 200px;
+}
+
 #pob-input {
     width: 100%;
     padding: 15px;

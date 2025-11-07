@@ -4,14 +4,42 @@ A Windows application that helps you import and follow Path of Building (PoB) bu
 
 ## Features
 
+### Core Features
 - **Import PoB Builds**: Paste your Path of Building export code to import builds
+- **Demo Build**: Try the tool instantly with a pre-loaded Lightning Arrow Deadeye build
 - **Progress Tracking**: Track your current level, act, and completed milestones
-- **Leveling Guide**: Step-by-step checklist through all acts and into maps
+- **Leveling Guide**: Step-by-step checklist through all 10 acts and into endgame
 - **Skills & Gems**: View all skill gems and their setups from your build
 - **Gear Tracking**: See recommended gear from your PoB build
 - **Passive Tree**: View passive tree information
 - **Build Notes**: Access any notes from your PoB build
 - **Multiple Builds**: Import and manage multiple builds
+
+### Quest & Rewards System
+- **Quest Tracking**: Complete quest list for all 10 acts
+- **Important Rewards**: Highlights quests that give passive skill points
+- **Gem Unlocks**: Track when vendors unlock new gems for purchase
+- **Quest Checklist**: Mark quests as complete as you progress
+- **Resistance Penalties**: Reminders about Kitava's -30% resist penalties
+
+### Labyrinth & Ascendancy
+- **Trial Tracking**: Track all Labyrinth trials across Normal, Cruel, Merciless, and Eternal labs
+- **Lab Completion**: Mark each Labyrinth difficulty as complete
+- **Ascendancy Points**: Visual tracking of your 2/4/6/8 Ascendancy point progression
+- **Trial Locations**: See exactly where each trial is located and in which act
+
+### Act-by-Act Tips
+- **Leveling Tips**: Important tips and tricks for each act
+- **Farming Spots**: Suggestions for good farming locations (Blood Aqueduct, etc.)
+- **Boss Preparation**: Advice for preparing for major boss fights
+- **Resistance Reminders**: Warnings about when you need to fix your resistances
+- **Vendor Unlocks**: Know when important vendors (Siosa, Lilly Roth) unlock
+
+### Endgame Progression
+- **Map Tiers**: Guidance through White, Yellow, and Red maps
+- **Atlas Completion**: Tips for Atlas progression
+- **Pinnacle Content**: Milestones for Maven, Conquerors, and endgame bosses
+- **Level Milestones**: Track progression from level 1 to 90+
 
 ## Quick Start (Windows)
 
@@ -38,7 +66,16 @@ A standalone .exe file will be available for download that requires no Python in
 
 ## How to Use
 
-### 1. Export from Path of Building
+### Option 1: Try the Demo Build (Fastest!)
+
+1. Open the PoE Build Guide Tool in your browser
+2. Click "Load Demo Build" button
+3. Explore all features with a pre-made Lightning Arrow Deadeye build
+4. Perfect for testing before importing your own builds!
+
+### Option 2: Import Your Own Build from Path of Building
+
+#### Step 1: Export from Path of Building
 
 1. Open Path of Building
 2. Select your build
@@ -46,20 +83,24 @@ A standalone .exe file will be available for download that requires no Python in
 4. Click "Generate" to create a build code
 5. Click "Copy" to copy the code to clipboard
 
-### 2. Import Build
+#### Step 2: Import into Tool
 
 1. Open the PoE Build Guide Tool in your browser
 2. Paste your PoB code into the text area
 3. Click "Import Build"
 4. Your build will appear in the builds list
 
-### 3. Track Your Progress
+### Track Your Progress
 
 1. Click on a build to view details
 2. Update your current level and act
-3. Check off milestones as you complete them
-4. Browse skills, gems, and gear recommendations
-5. Your progress is saved automatically
+3. **Leveling Tab**: Check off milestones as you complete acts
+4. **Quests Tab**: Track important quest rewards and passive points
+5. **Labyrinth Tab**: Mark trials and lab completions for Ascendancy
+6. **Skills Tab**: View your gem setups and links
+7. **Gear Tab**: See recommended equipment
+8. **Notes Tab**: Read build guide notes and tips
+9. Your progress is saved automatically!
 
 ## Project Structure
 

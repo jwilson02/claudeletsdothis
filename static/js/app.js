@@ -23,6 +23,9 @@ function initializeEventListeners() {
     // Import button
     document.getElementById('import-btn').addEventListener('click', importBuild);
 
+    // Demo button
+    document.getElementById('demo-btn').addEventListener('click', loadDemoBuild);
+
     // Back button
     document.getElementById('back-btn').addEventListener('click', showBuildsList);
 
@@ -114,6 +117,29 @@ async function importBuild() {
     } finally {
         importBtn.disabled = false;
         importBtn.textContent = 'Import Build';
+    }
+}
+
+async function loadDemoBuild() {
+    const demoBtn = document.getElementById('demo-btn');
+
+    demoBtn.disabled = true;
+    demoBtn.textContent = 'Loading...';
+
+    try {
+        const data = await apiCall('/builds/demo', 'POST');
+        showStatus('success', 'Demo build loaded! Click on it below to explore features.');
+
+        // Reload builds and show the demo build
+        await loadBuilds();
+        setTimeout(() => {
+            loadBuildDetails(data.build_id);
+        }, 500);
+    } catch (error) {
+        showStatus('error', 'Failed to load demo build: ' + error.message);
+    } finally {
+        demoBtn.disabled = false;
+        demoBtn.textContent = 'Load Demo Build';
     }
 }
 
