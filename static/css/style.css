@@ -834,3 +834,166 @@ footer {
     animation: spin 1s linear infinite;
     margin: 20px auto;
 }
+
+/* Pixel Art Generator Styles */
+#pixel-art-section {
+    background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+    border: 2px solid var(--primary-color);
+}
+
+#pixel-art-section h2 {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.pixel-art-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: var(--bg-dark);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.pixel-art-controls .control-group {
+    flex: 1;
+    min-width: 250px;
+}
+
+.pixel-art-controls label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.pixel-select {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg-medium);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pixel-select:hover {
+    border-color: var(--primary-color);
+}
+
+.pixel-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2);
+}
+
+.pixel-art-preview {
+    min-height: 400px;
+    background: var(--bg-dark);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.pixel-art-preview img {
+    max-width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    border: 3px solid var(--primary-color);
+    border-radius: 4px;
+    box-shadow: 0 8px 16px var(--shadow);
+}
+
+.pixel-art-preview .empty-state {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.pixel-art-info {
+    background: var(--bg-dark);
+    padding: 25px;
+    border-radius: 8px;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.pixel-art-info h3 {
+    color: var(--secondary-color);
+    margin-bottom: 12px;
+    font-size: 1.3rem;
+}
+
+.pixel-art-info p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.pixel-art-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.pixel-art-info ul li {
+    padding: 8px 0;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pixel-art-info ul li:last-child {
+    border-bottom: none;
+}
+
+.pixel-art-info ul li strong {
+    color: var(--primary-color);
+}
+
+/* Pixel art animation */
+@keyframes pixelPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.pixel-art-preview img.animate {
+    animation: pixelPulse 2s ease-in-out infinite;
+}
+
+/* Download button specific styling */
+#download-art-btn {
+    background: var(--success-color);
+    min-width: 180px;
+}
+
+#download-art-btn:hover {
+    background: #15803d;
+}
+
+/* Responsive design for pixel art section */
+@media (max-width: 768px) {
+    .pixel-art-controls {
+        flex-direction: column;
+    }
+
+    .pixel-art-controls .control-group {
+        min-width: 100%;
+    }
+
+    .pixel-art-preview {
+        min-height: 300px;
+        padding: 20px;
+    }
+}

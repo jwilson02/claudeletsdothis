@@ -41,6 +41,15 @@ A Windows application that helps you import and follow Path of Building (PoB) bu
 - **Pinnacle Content**: Milestones for Maven, Conquerors, and endgame bosses
 - **Level Milestones**: Track progression from level 1 to 90+
 
+### SCUMM-Style Pixel Art Generator
+- **Retro Art Creation**: Generate pixel art in the style of classic LucasArts adventure games
+- **Multiple Presets**: Choose from 8+ preset scenes including dungeons, beaches, forests, and character sprites
+- **Color Palettes**: Switch between authentic retro palettes (EGA, VGA Warm, Monkey Island style)
+- **Downloadable Images**: Export your generated pixel art as PNG files
+- **Classic Characters**: Heroes, pirates, merchants rendered in authentic SCUMM style
+- **Sprite Sheets**: Generate walking animations and object collections
+- **Nostalgic Interface**: Includes classic SCUMM verb-based interface option
+
 ## Quick Start (Windows)
 
 ### Option 1: Run from Python (Recommended for first-time setup)
@@ -102,12 +111,35 @@ A standalone .exe file will be available for download that requires no Python in
 8. **Notes Tab**: Read build guide notes and tips
 9. Your progress is saved automatically!
 
+### Create SCUMM-Style Pixel Art
+
+1. Scroll to the "SCUMM-Style Pixel Art Generator" section on the main page
+2. Select a preset scene from the dropdown:
+   - **Dungeon Hero**: Hero exploring a dark dungeon with treasure
+   - **Pirate Beach**: Pirate on a tropical beach
+   - **Forest Treasure**: Hero discovering treasure in the forest
+   - **Character Sheet**: Multiple character sprites showcase
+   - **Objects Collection**: Various SCUMM-style objects
+   - **Sprite Sheets**: Walking animations and object collections
+   - **SCUMM Interface**: Classic game interface with verb menu
+3. Choose a color palette:
+   - **VGA Warm**: Rich, warm colors typical of early 90s VGA games
+   - **Classic EGA**: 16-color EGA palette from the 80s
+   - **Monkey Island**: Palette inspired by The Secret of Monkey Island
+4. Click "Generate Pixel Art" to create your retro artwork
+5. Click "Download Image" to save the PNG file to your computer
+
+The pixel art generator creates authentic retro-style graphics reminiscent of classic LucasArts adventure games like Monkey Island, Day of the Tentacle, and Maniac Mansion. Perfect for game development, nostalgia, or just having fun with retro aesthetics!
+
 ## Project Structure
 
 ```
 poe-build-guide/
 ├── app.py                 # Main Flask application
 ├── pob_parser.py          # Path of Building code parser
+├── game_data.py           # Quest, lab, and progression data
+├── demo_build.py          # Demo Lightning Arrow build
+├── scumm_art.py           # SCUMM-style pixel art generator
 ├── requirements.txt       # Python dependencies
 ├── start.bat             # Windows startup script
 ├── data/                 # Saved builds and progress (auto-created)

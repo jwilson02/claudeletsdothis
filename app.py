@@ -16,6 +16,7 @@ from game_data import (
     get_quest_rewards_for_act, get_act_tips
 )
 from demo_build import create_demo_build, get_demo_progress
+from scumm_art import generate_preset_scene, generate_custom_scene, SCUMM_PALETTES
 
 app = Flask(__name__)
 CORS(app)
@@ -330,6 +331,99 @@ def toggle_lab(build_id, lab):
     save_json_file(PROGRESS_FILE, progress)
 
     return jsonify({'success': True, 'completed_labs': completed})
+
+
+@app.route('/api/pixel-art/presets', methods=['GET'])
+def get_pixel_art_presets():
+    """Get available pixel art presets"""
+    presets = [
+        {
+            'id': 'dungeon_hero',
+            'name': 'Dungeon Hero',
+            'description': 'Hero exploring a dark dungeon with treasure chest'
+        },
+        {
+            'id': 'pirate_beach',
+            'name': 'Pirate Beach',
+            'description': 'Pirate on a tropical beach'
+        },
+        {
+            'id': 'forest_treasure',
+            'name': 'Forest Treasure',
+            'description': 'Hero discovering treasure in the forest'
+        },
+        {
+            'id': 'character_sheet',
+            'name': 'Character Sheet',
+            'description': 'Multiple character sprites showcase'
+        },
+        {
+            'id': 'objects_collection',
+            'name': 'Objects Collection',
+            'description': 'Various SCUMM-style objects'
+        },
+        {
+            'id': 'sprite_sheet_characters',
+            'name': 'Character Sprite Sheet',
+            'description': 'Walking animation sprite sheet'
+        },
+        {
+            'id': 'sprite_sheet_objects',
+            'name': 'Objects Sprite Sheet',
+            'description': 'Multiple object sprites'
+        },
+        {
+            'id': 'scumm_interface',
+            'name': 'SCUMM Interface',
+            'description': 'Classic SCUMM game interface with verb menu'
+        }
+    ]
+
+    palettes = list(SCUMM_PALETTES.keys())
+
+    return jsonify({
+        'presets': presets,
+        'palettes': palettes
+    })
+
+
+@app.route('/api/pixel-art/generate/preset', methods=['POST'])
+def generate_preset():
+    """Generate a preset pixel art scene"""
+    data = request.get_json()
+    scene_name = data.get('scene', 'dungeon_hero')
+    palette = data.get('palette', 'vga_warm')
+
+    try:
+        image_data = generate_preset_scene(scene_name, palette)
+        return jsonify({
+            'success': True,
+            'image': image_data,
+            'scene': scene_name,
+            'palette': palette
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+
+@app.route('/api/pixel-art/generate/custom', methods=['POST'])
+def generate_custom():
+    """Generate a custom pixel art scene"""
+    data = request.get_json()
+
+    background = data.get('background', None)
+    characters = data.get('characters', [])
+    objects = data.get('objects', [])
+    palette = data.get('palette', 'vga_warm')
+
+    try:
+        image_data = generate_custom_scene(background, characters, objects, palette)
+        return jsonify({
+            'success': True,
+            'image': image_data
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 
 def open_browser():

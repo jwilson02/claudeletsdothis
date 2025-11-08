@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeEventListeners();
     loadBuilds();
     loadLabsData();
+    initPixelArtGenerator();
 });
 
 // Event Listeners
@@ -624,6 +625,167 @@ async function toggleLab(lab) {
     } catch (error) {
         console.error('Failed to toggle lab:', error);
     }
+}
+
+// ========================================
+// SCUMM-Style Pixel Art Generator
+// ========================================
+
+let pixelArtPresets = [];
+let pixelArtPalettes = [];
+let currentPixelArt = null;
+
+async function initPixelArtGenerator() {
+    try {
+        // Load available presets and palettes
+        const data = await apiCall('/pixel-art/presets');
+        pixelArtPresets = data.presets;
+        pixelArtPalettes = data.palettes;
+
+        // Populate preset dropdown
+        const presetSelect = document.getElementById('preset-select');
+        presetSelect.innerHTML = '<option value="">-- Select a Preset Scene --</option>';
+
+        pixelArtPresets.forEach(preset => {
+            const option = document.createElement('option');
+            option.value = preset.id;
+            option.textContent = preset.name;
+            presetSelect.appendChild(option);
+        });
+
+        // Populate palette dropdown
+        const paletteSelect = document.getElementById('palette-select');
+        paletteSelect.innerHTML = '';
+        pixelArtPalettes.forEach(palette => {
+            const option = document.createElement('option');
+            option.value = palette;
+            option.textContent = formatPaletteName(palette);
+            paletteSelect.appendChild(option);
+        });
+
+        // Populate presets info list
+        const presetsInfo = document.getElementById('presets-info');
+        presetsInfo.innerHTML = '';
+        pixelArtPresets.forEach(preset => {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${preset.name}:</strong> ${preset.description}`;
+            presetsInfo.appendChild(li);
+        });
+
+        // Add event listeners
+        document.getElementById('generate-btn').addEventListener('click', generatePixelArt);
+        document.getElementById('download-art-btn').addEventListener('click', downloadPixelArt);
+
+    } catch (error) {
+        console.error('Failed to initialize pixel art generator:', error);
+    }
+}
+
+function formatPaletteName(palette) {
+    // Convert snake_case to Title Case
+    return palette
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+}
+
+async function generatePixelArt() {
+    const presetSelect = document.getElementById('preset-select');
+    const paletteSelect = document.getElementById('palette-select');
+    const generateBtn = document.getElementById('generate-btn');
+    const previewDiv = document.getElementById('pixel-art-preview');
+
+    const scene = presetSelect.value;
+    const palette = paletteSelect.value;
+
+    if (!scene) {
+        previewDiv.innerHTML = '<p class="empty-state" style="color: #dc2626;">Please select a preset scene first!</p>';
+        return;
+    }
+
+    // Show loading state
+    generateBtn.disabled = true;
+    generateBtn.textContent = 'Generating...';
+    previewDiv.innerHTML = '<div class="loading"></div>';
+
+    try {
+        const data = await apiCall('/pixel-art/generate/preset', 'POST', {
+            scene: scene,
+            palette: palette
+        });
+
+        if (data.success) {
+            currentPixelArt = data.image;
+
+            // Display the generated image
+            previewDiv.innerHTML = `
+                <img src="${data.image}" alt="${scene}" class="animate">
+            `;
+
+            // Show download button
+            document.getElementById('download-art-btn').style.display = 'inline-block';
+
+            // Show success message
+            const sceneName = pixelArtPresets.find(p => p.id === scene)?.name || scene;
+            const paletteName = formatPaletteName(palette);
+
+            // Add a success indicator
+            previewDiv.insertAdjacentHTML('beforeend', `
+                <div style="position: absolute; top: 10px; right: 10px; background: rgba(22, 163, 74, 0.9); color: white; padding: 8px 16px; border-radius: 6px; font-weight: 500;">
+                    ✓ Generated!
+                </div>
+            `);
+
+            setTimeout(() => {
+                const indicator = previewDiv.querySelector('div[style*="position: absolute"]');
+                if (indicator) indicator.remove();
+            }, 3000);
+
+        } else {
+            throw new Error('Generation failed');
+        }
+
+    } catch (error) {
+        console.error('Failed to generate pixel art:', error);
+        previewDiv.innerHTML = `
+            <p class="empty-state" style="color: #dc2626;">
+                Failed to generate pixel art. Please try again.
+            </p>
+        `;
+    } finally {
+        generateBtn.disabled = false;
+        generateBtn.textContent = 'Generate Pixel Art';
+    }
+}
+
+function downloadPixelArt() {
+    if (!currentPixelArt) return;
+
+    const presetSelect = document.getElementById('preset-select');
+    const paletteSelect = document.getElementById('palette-select');
+    const scene = presetSelect.value;
+    const palette = paletteSelect.value;
+
+    // Create a temporary link element
+    const link = document.createElement('a');
+    link.href = currentPixelArt;
+    link.download = `scumm_${scene}_${palette}.png`;
+
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Show feedback
+    const downloadBtn = document.getElementById('download-art-btn');
+    const originalText = downloadBtn.textContent;
+    downloadBtn.textContent = '✓ Downloaded!';
+    downloadBtn.style.background = '#15803d';
+
+    setTimeout(() => {
+        downloadBtn.textContent = originalText;
+        downloadBtn.style.background = '';
+    }, 2000);
 }
 
 // Make functions globally accessible
