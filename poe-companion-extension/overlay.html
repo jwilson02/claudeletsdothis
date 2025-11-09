@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PoE Companion</title>
+  <link rel="stylesheet" href="overlay.css">
+</head>
+<body>
+  <div id="app" class="overlay-container">
+    <!-- Header Bar -->
+    <div class="header-bar" id="headerBar">
+      <div class="header-title">
+        <span class="logo">⚔️ PoE Companion</span>
+        <span class="hotkey-hint">F9: Toggle | F10: Compact</span>
+      </div>
+      <div class="header-controls">
+        <button id="compactBtn" class="header-btn" title="Toggle Compact Mode (F10)">📋</button>
+        <button id="settingsBtn" class="header-btn" title="Settings">⚙️</button>
+        <button id="minimizeBtn" class="header-btn" title="Minimize">−</button>
+        <button id="closeBtn" class="header-btn close" title="Close">×</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-area" id="contentArea">
+
+      <!-- Import Section -->
+      <div id="importSection" class="section">
+        <h3>Import Build</h3>
+        <div class="input-group">
+          <input type="text" id="pobInput" placeholder="Paste PoB code or URL here...">
+          <button id="importBtn" class="btn-primary">Import</button>
+        </div>
+        <button id="loadDemoBtn" class="btn-secondary">Load Demo Build</button>
+        <div id="importStatus" class="status-message"></div>
+      </div>
+
+      <!-- Build Info Section -->
+      <div id="buildSection" class="section hidden">
+        <div class="build-header">
+          <h2 id="buildName">Build Name</h2>
+          <p class="build-meta">
+            <span id="buildClass">Class</span> •
+            <span id="buildLevel">Level 1</span>
+          </p>
+        </div>
+
+        <!-- Progress Controls -->
+        <div class="progress-controls">
+          <div class="form-group">
+            <label>Current Level:</label>
+            <input type="number" id="levelInput" min="1" max="100" value="1">
+          </div>
+          <div class="form-group">
+            <label>Current Act:</label>
+            <select id="actSelect">
+              <option value="1">Act 1</option>
+              <option value="2">Act 2</option>
+              <option value="3">Act 3</option>
+              <option value="4">Act 4</option>
+              <option value="5">Act 5</option>
+              <option value="6">Act 6</option>
+              <option value="7">Act 7</option>
+              <option value="8">Act 8</option>
+              <option value="9">Act 9</option>
+              <option value="10">Act 10</option>
+              <option value="11">Maps</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quest Objectives (Priority Display) -->
+        <div class="priority-section">
+          <h3>🎯 Quest Objectives</h3>
+          <div id="questList" class="quest-list">
+            <p class="loading">Select your current act above...</p>
+          </div>
+        </div>
+
+        <!-- Collapsible Sections -->
+        <div class="accordion">
+
+          <!-- Act Tips -->
+          <div class="accordion-item">
+            <button class="accordion-header" data-target="actTips">
+              💡 Act Tips & Strategy
+            </button>
+            <div id="actTips" class="accordion-content">
+              <p class="loading">Loading tips...</p>
+            </div>
+          </div>
+
+          <!-- Next Skills -->
+          <div class="accordion-item">
+            <button class="accordion-header" data-target="nextSkills">
+              💎 Skills & Gems
+            </button>
+            <div id="nextSkills" class="accordion-content">
+              <div id="skillsList"></div>
+            </div>
+          </div>
+
+          <!-- Gear -->
+          <div class="accordion-item">
+            <button class="accordion-header" data-target="gearSection">
+              🛡️ Gear Requirements
+            </button>
+            <div id="gearSection" class="accordion-content">
+              <div id="gearList"></div>
+            </div>
+          </div>
+
+          <!-- Labyrinth -->
+          <div class="accordion-item">
+            <button class="accordion-header" data-target="labSection">
+              🏛️ Labyrinth & Trials
+            </button>
+            <div id="labSection" class="accordion-content">
+              <div id="labList"></div>
+            </div>
+          </div>
+
+          <!-- Passive Tree -->
+          <div class="accordion-item">
+            <button class="accordion-header" data-target="treeSection">
+              🌳 Passive Tree Info
+            </button>
+            <div id="treeSection" class="accordion-content">
+              <div id="treeInfo"></div>
+            </div>
+          </div>
+
+          <!-- Milestones -->
+          <div class="accordion-item">
+            <button class="accordion-header" data-target="milestones">
+              ✅ Leveling Milestones
+            </button>
+            <div id="milestones" class="accordion-content">
+              <div id="milestoneList"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Compact Mode View -->
+    <div id="compactView" class="compact-view hidden">
+      <div class="compact-header">
+        <strong id="compactBuildName">No Build</strong>
+        <span id="compactLevel">Lv1</span> • <span id="compactAct">Act 1</span>
+      </div>
+      <div class="compact-quests" id="compactQuests">
+        <p>No objectives</p>
+      </div>
+      <button id="expandBtn" class="btn-expand">Expand (F10)</button>
+    </div>
+
+  </div>
+
+  <script src="overlay.js"></script>
+</body>
+</html>

@@ -2,6 +2,17 @@
 
 A Windows application that helps you import and follow Path of Building (PoB) builds with step-by-step guidance through the leveling process.
 
+## 🎮 NEW: Companion Extension
+
+We now have an **in-game overlay companion app**! Check out the `poe-companion-extension/` folder for:
+- Electron-based overlay window that stays on top while playing
+- Quest objectives and tips visible in-game
+- Hotkey support (F9 to toggle, F10 for compact mode)
+- Auto-save progress tracking
+- Seamless integration with the main build guide tool
+
+See [poe-companion-extension/README.md](poe-companion-extension/README.md) for details!
+
 ## Features
 
 ### Core Features

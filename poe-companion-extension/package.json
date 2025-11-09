@@ -1,0 +1,44 @@
+{
+  "name": "poe-companion-extension",
+  "version": "1.0.0",
+  "description": "Path of Exile Companion Overlay - In-game build guide overlay",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win --x64"
+  },
+  "keywords": [
+    "path-of-exile",
+    "poe",
+    "overlay",
+    "build-guide",
+    "companion"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "electron-store": "^8.1.0"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.poe.companion",
+    "productName": "PoE Companion",
+    "win": {
+      "target": "nsis",
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "files": [
+      "**/*",
+      "!data${/*}",
+      "!*.md"
+    ]
+  }
+}
